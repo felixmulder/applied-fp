@@ -184,7 +184,7 @@ Adds two functions:
 
 • `ap`
 
-## pure
+## Applicative - `pure`
 ```tut:silent
 trait Applicative[F[_]] {
 
@@ -198,7 +198,7 @@ trait Applicative[F[_]] {
 
 •  `Option.apply`
 
-## ap
+## Applicative - `ap`
 ```tut:silent
 trait Applicative[F[_]] {
   // ...
