@@ -361,3 +361,25 @@ List(1, 2).flatMap(x => f(x).flatMap(g))
 
 List(1, 2).flatMap(f).flatMap(g) == List(1, 2).flatMap(x => f(x).flatMap(g))
 ```
+
+# IO
+
+## IO
+```tut:book
+import cats.effect.IO
+
+val read = IO { io.StdIn.readInt() }
+
+(read, read).mapN(_ + _)
+```
+
+## IO
+```tut:book
+(read, read).mapN(_ + _).unsafeRunSync() // > 1, > 2
+```
+
+# Exercise
+
+# Traverse
+
+# Stream
