@@ -7,7 +7,7 @@ import cats.syntax.functor._
 import cats.laws.discipline.ApplicativeTests
 
 import org.scalacheck.{Arbitrary, Gen}
-import maxwell.applicatives._
+import maxwell.applicative._
 
 class ApplicativesSpec extends CatsSuite {
 
