@@ -181,6 +181,7 @@ List("1", "2", "a", "b").traverse(parseInt).show
 Adds two functions:
 
 • `pure`
+
 • `ap`
 
 ## pure
@@ -194,6 +195,7 @@ trait Applicative[F[_]] {
 ```
 
 •  `List.apply`
+
 •  `Option.apply`
 
 ## ap
@@ -225,10 +227,13 @@ ff <*> fa
 # Cartesian
 
 ## Applicative Laws
-- Identity
-- Composition
-- Homomorphism
-- Interchange
+• Identity
+
+• Composition
+
+• Homomorphism
+
+• Interchange
 
 ## Identity
 ```tut:book
@@ -267,4 +272,92 @@ val y: Int = 1
 val u: List[Int => String] = List(_.toString)
 
 u <*> y.pure[List] == ((f: Int => String) => f(y)).pure[List] <*> u
+```
+
+# Exercise
+
+## Two things to remember about Applicative
+• "Disjoint" - i.e. parallel
+
+• `pure` - lift a value into `F[_]`
+
+# Monads
+
+## Monads
+```tut:invisible
+import scala.concurrent.Future
+```
+```tut:silent
+val c1 =
+  Future { /** let's assume we're making an async call here */ 1 }
+
+val c2: Int => Future[Int] =
+  x => Future { /** let's assume we're making another async call here */ x * 2 }
+```
+
+Now there's a dependency between `c2` and some value `x`. What if we want to
+chain calls to `c1` with a call to `c2`?
+
+## Monads
+```tut:book
+c1.map(c2)
+```
+
+## Monads
+```tut:book
+c1.map(c2).flatten
+```
+
+## Monads
+```tut:book
+c1.flatMap(c2)
+```
+
+## Monads
+Monads are applicative functors with a continuation function referred to as
+"bind" and in scala `flatMap`
+
+They can be thought of as "*composable* computation descriptions"
+
+## Monads
+"Monads are things with `flatMap`" <- this isn't completely wrong - ergo it's
+not completely right.
+
+## Monad Laws
+• Left identity
+  `a.pure[M].flatMap(f) == f(a)`
+
+• Right identity
+  `m.flatMap(pure) == m`
+
+• Associativity
+  `m.flatMap(f).flatMap(g) == m.flatMap(x => f(x).flatMap(g))`
+
+## Monad Laws - Left identity
+```tut:silent
+val f: Int => List[Int] = x => List(x)
+val g: Int => List[Int] = x => List(x * 2)
+```
+```tut:book
+1.pure[List].flatMap(f)
+
+f(1)
+
+1.pure[List].flatMap(f) == f(1)
+```
+
+## Monad Laws - Right identity
+```tut:book
+List(1).flatMap(_.pure[List])
+
+List(1).flatMap(_.pure[List]) == List(1)
+```
+
+## Monad Laws - Associativity
+```tut:book
+List(1, 2).flatMap(f).flatMap(g)
+
+List(1, 2).flatMap(x => f(x).flatMap(g))
+
+List(1, 2).flatMap(f).flatMap(g) == List(1, 2).flatMap(x => f(x).flatMap(g))
 ```
