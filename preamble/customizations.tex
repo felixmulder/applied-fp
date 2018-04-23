@@ -1,0 +1,112 @@
+\usepackage{setspace}
+\setstretch{1.5}
+
+\usepackage{dirtytalk}
+\usepackage{fancyvrb}
+
+\definecolor{darkgray}{HTML}{666666}
+\definecolor{mediumgray}{HTML}{888888}
+\definecolor{dimgray}{HTML}{BBBBBB}
+
+\setbeamercolor{alerted text}{fg=black}
+\setbeamerfont{alerted text}{series=\bfseries}
+
+\beamerdefaultoverlayspecification{<+->}
+
+\usepackage{etoolbox}
+\usepackage{pgfpages}
+\usepackage[T1]{fontenc}
+\usepackage[sfdefault]{cabin}
+\usepackage{newtxsf}
+\usepackage[scaled=1.1]{inconsolata}
+
+% Set font for verbatim env:
+\usepackage{fontspec}
+\setmonofont[
+  Contextuals={Alternate}
+]{FuraCode Nerd Font}
+
+% Enable ligatures:
+\makeatletter
+\def\verbatim@nolig@list{}
+\makeatother
+
+% Set main font:
+%\usefonttheme{professionalfonts} % using non standard fonts for beamer
+\usefonttheme{serif}
+\setmainfont{Montserrat}
+
+
+\usepackage{array}
+\usepackage{booktabs}
+
+% Turn of navigation syms:
+\beamertemplatenavigationsymbolsempty
+
+\setbeamersize{text margin left=30pt,text margin right=30pt}
+\setbeamercolor{structure}{fg=black}
+\setbeamertemplate{title page}{
+  \vspace{70pt}
+  \usebeamerfont{title}\inserttitle\par
+  \usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par
+
+  \vspace{40pt}
+  \usebeamerfont{author}\insertauthor\par
+  \usebeamerfont{date}\insertdate\par
+}
+\setbeamertemplate{frametitle}{\vspace{20pt}\insertframetitle}
+\setbeamerfont{frametitle}{size=\fontsize{14pt}{14pt},series=\bfseries}
+\setbeamerfont{title}{size=\fontsize{20pt}{20pt},family=\textrm,series=\bfseries}
+\setbeamerfont{subtitle}{size=\fontsize{12pt}{12pt},series=\mdseries}
+\setbeamerfont{author}{size=\fontsize{10pt}{10pt}}
+\setbeamerfont{date}{size=\fontsize{10pt}{10pt}}
+\setbeamertemplate{footline}{
+  \hspace{0.25cm}
+  \color{mediumgray}{
+    \href{https://twitter.com/felixmulder}{{@}felixmulder}
+  }
+  \hfill
+  \insertframenumber{} / \inserttotalframenumber
+  \hspace{0.25cm}
+  \vspace{0.25cm}
+}
+
+\setbeamertemplate{items}[circle]
+\setbeamertemplate{section in toc}{\inserttocsectionnumber.~\inserttocsection}
+
+\newcommand{\singletitle}[1]{
+  \begin{center}
+    \vfill\vfill
+    \fontsize{20pt}{20pt}\textbf{#1}
+    \vfill\vfill
+  \end{center}}
+
+\newcommand{\notelist}[1]{
+  \note{
+    \begin{itemize}[<.->]
+    \setlength\itemsep{2pt}
+    \setstretch{0}#1
+    \end{itemize}
+  }}
+
+\AtBeginSection[]
+{
+  {
+    % Disable footline in section frames:
+    %\setbeamertemplate{footline}{}
+    % Set color at new section e.g. a page with a single heading:
+    %\setbeamercolor{background canvas}{bg=frgreen}
+    \begin{frame}
+      %\color{auyellow}
+      \singletitle{\insertsectionhead}
+    \end{frame}
+  }
+}
+
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\},fontsize=\linespread{1.2}\scriptsize}
+
+\AtBeginDocument
+{
+  % Set the color of the entire document:
+  %\setbeamercolor{background canvas}{bg=dimgray}
+}
