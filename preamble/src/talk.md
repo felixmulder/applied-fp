@@ -382,4 +382,40 @@ val read = IO { io.StdIn.readInt() }
 
 # Traverse
 
+## Traverse
+```tut:silent
+trait Traverse[F[_]] {
+  def traverse[G[_]: Applicative, A, B](fa: F[G[A]])(f: A => G[B]): G[F[B]]
+}
+```
+
+## Traverse
+```tut:book
+List(Option(1), None, Option(3)).traverse(identity)
+
+List(Option(1), Option(2), Option(3)).traverse(identity)
+```
+
+## Traverse
+```tut:silent
+def traverse[G[_]: Applicative, A, B](fa: List[A])(f: A => G[B]): G[List[B]] = {
+  fa.foldRight(List.empty[B].pure[G]){ case (a, acc) =>
+    Applicative[G].map2(f(a), acc)(_ ::_)
+  }
+}
+```
+```tut:book
+traverse(List(Option(1), Option(2), Option(3)))(identity)
+```
+
+## Traverse
+```tut:book
+List(Option(1), Option(2), Option(3)).traverse(identity)
+
+List(Option(1), Option(2), Option(3)).sequence
+```
+
 # Stream
+
+## Stream
+## `Stream[F[_], A]`
