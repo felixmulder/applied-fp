@@ -464,6 +464,8 @@ hello ++ concat
 
 • `Signal[F[_], A]`
 
+• `Scheduler`
+
 # Principled vs Unprincipled
 
 # Control Flow
@@ -485,19 +487,19 @@ import cats.data.Kleisli
 import cats.effect.IO
 import org.http4s.{Request, Response}
 
-type HttpService[F[_]] = Kleisli[F, Request[IO], Response[IO]]
+type HttpService[F[_]] = Kleisli[F, Request[F], Response[F]]
 ```
 
 ## http4s
 ```tut:silent
-type HttpService[F[_]] = Kleisli[F, Request[IO], Option[Response[IO]]]
+type HttpService[F[_]] = Kleisli[F, Request[F], Option[Response[F]]]
 ```
 
 ## http4s
 ```tut:silent
 import cats.data.OptionT
 
-type HttpService[F[_]] = Kleisli[OptionT[F, ?], Request[IO], Response[IO]]
+type HttpService[F[_]] = Kleisli[OptionT[F, ?], Request[F], Response[F]]
 ```
 
 ## http4s
