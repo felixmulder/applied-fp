@@ -325,12 +325,15 @@ not completely right.
 
 ## Monad Laws
 • Left identity
+
   `a.pure[M].flatMap(f) == f(a)`
 
 • Right identity
+
   `m.flatMap(pure) == m`
 
 • Associativity
+
   `m.flatMap(f).flatMap(g) == m.flatMap(x => f(x).flatMap(g))`
 
 ## Monad Laws - Left identity
@@ -418,4 +421,96 @@ List(Option(1), Option(2), Option(3)).sequence
 # Stream
 
 ## Stream
+### `fs2.Stream[F[_], A]`
+
+# Why do we need another stream?
+
+# Purity & Control Flow
+
 ## `Stream[F[_], A]`
+• Emits `n` values of the type `A` where `n = 0, 1, ...`
+
+• `A` is evaluated in the context of `F[_]`
+
+# Akka-Streams
+
+## `Stream[F[_], A]`
+```tut:book
+import fs2.Stream
+
+Stream.emit(1, 2, 3, 4, 5).toList
+```
+## `Stream[F[_], A]`
+```tut:silent
+val concat = Stream.eval(IO(1)) ++ Stream.eval(IO(2))
+
+concat.repeat
+```
+
+## Concatenating for Effect
+```tut:book:nofail
+Stream.eval(IO(println("hello!"))) ++ concat
+```
+
+## Concatenating for Effect
+```tut:book
+val hello = Stream.eval(IO(println("hello!"))).drain
+
+hello ++ concat
+```
+
+## Concurrency Primitives
+• `Ref[F[_], A]`
+
+• `Signal[F[_], A]`
+
+# Principled vs Unprincipled
+
+# Control Flow
+
+# Exercise
+
+# Putting it all together - http4s
+
+## Kleisli Tripple
+```tut:silent
+case class Kleisli[F[_], A, B](val run: A => F[B])
+```
+
+# Kleisli is a Monad
+
+## http4s
+```tut:silent:reset
+import cats.data.Kleisli
+import cats.effect.IO
+import org.http4s.{Request, Response}
+
+type HttpService[F[_]] = Kleisli[F, Request[IO], Response[IO]]
+```
+
+## http4s
+```tut:silent
+type HttpService[F[_]] = Kleisli[F, Request[IO], Option[Response[IO]]]
+```
+
+## http4s
+```tut:silent
+import cats.data.OptionT
+
+type HttpService[F[_]] = Kleisli[OptionT[F, ?], Request[IO], Response[IO]]
+```
+
+## http4s
+```tut:silent
+import org.http4s._
+import org.http4s.dsl.io._
+
+val service = HttpService[IO] {
+  case req => Ok("hello, whatever!")
+}
+```
+```tut:book
+val resp = service(Request[IO]())
+
+resp.value.unsafeRunSync()
+```

@@ -2,6 +2,8 @@ import scala.sys.process._
 
 enablePlugins(TutPlugin)
 
+lazy val http4sVersion = "0.18.8"
+
 lazy val `presentation` = project.in(file("."))
   .settings(projectLayout ++ compilerOptions ++ compilerPlugins)
   .settings(
@@ -10,8 +12,12 @@ lazy val `presentation` = project.in(file("."))
     tutTargetDirectory := baseDirectory.value / "target",
 
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-core"   % "1.1.0",
-      "org.typelevel" %% "cats-effect" % "0.10.1",
+      "co.fs2"         %% "fs2-io"              % "0.10.3",
+      "org.typelevel"  %% "cats-core"           % "1.1.0",
+      "org.typelevel"  %% "cats-effect"         % "0.10.1",
+      "org.http4s"     %% "http4s-dsl"          % http4sVersion,
+      "org.http4s"     %% "http4s-blaze-server" % http4sVersion,
+      "org.http4s"     %% "http4s-blaze-client" % http4sVersion,
       // Test dependencies:
       "org.scalatest" %% "scalatest" % "3.0.4"  % "test",
     ),
