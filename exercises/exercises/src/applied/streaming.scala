@@ -1,7 +1,8 @@
 package applied
 
 import fs2.{Pure, Scheduler, Stream}
-import cats.effect.IO
+import fs2.async.signalOf
+import cats.effect.{IO, Timer}
 import cats.implicits._
 
 import scala.concurrent.duration.{FiniteDuration, DurationInt}

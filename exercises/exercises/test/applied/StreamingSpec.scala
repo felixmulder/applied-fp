@@ -162,7 +162,7 @@ class StreamingSpec extends FlatSpec with Matchers {
            // succeed at first try after retries should have stopped
       task =  succeedAt(_ >= 7, r)
       s    <- Scheduler[IO](1)
-      res  <- retryOp(task, tries = 6, backOff = 10.millis)(s, global).attempt
+      res  <- retryOp(task, tries = 5, backOff = 10.millis)(s, global).attempt
     } yield assert(res.isLeft)
 
     IO.race(timeLimit, retry.compile.drain).unsafeRunSync()
