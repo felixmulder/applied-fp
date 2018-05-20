@@ -25,7 +25,7 @@ class ApplicativesSpec extends CatsSuite {
   }
 
   test("combineWith should be able to combine Options") {
-    combineWith(Option(1), Option(2), (i: Int, j: Int) => Some(i + j)) should be (Some(3))
+    combineWith(Option(1), Option(2), (i: Int, j: Int) => i + j) should be (Some(3))
   }
 
   // Bonus!
