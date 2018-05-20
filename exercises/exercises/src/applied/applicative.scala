@@ -1,7 +1,5 @@
 package applied
 
-//import cats.syntax.apply._
-//import cats.syntax.applicative._
 import cats.implicits._
 import cats.Applicative
 

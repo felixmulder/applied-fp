@@ -1,5 +1,7 @@
 package applied
 
+import cats.implicits._
+import cats.Applicative
 import cats.effect.IO
 import scala.concurrent.ExecutionContext
 
