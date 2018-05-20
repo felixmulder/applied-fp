@@ -1,4 +1,4 @@
-package maxwell
+package applied
 
 import cats.effect.IO
 import scala.concurrent.ExecutionContext

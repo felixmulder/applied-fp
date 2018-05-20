@@ -1,4 +1,4 @@
-package maxwell
+package applied
 
 import cats.Applicative
 import cats.implicits._

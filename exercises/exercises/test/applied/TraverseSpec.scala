@@ -1,4 +1,4 @@
-package maxwell
+package applied
 
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -11,7 +11,7 @@ import cats.data._
 import cats.implicits._
 import fs2.async.refOf
 
-import maxwell.traverse._
+import applied.traverse._
 
 class TraverseSpec extends FlatSpec with Matchers {
 

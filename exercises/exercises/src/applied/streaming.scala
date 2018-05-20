@@ -1,4 +1,4 @@
-package maxwell
+package applied
 
 import fs2.{Pure, Scheduler, Stream}
 import cats.effect.IO

@@ -1,4 +1,4 @@
-package maxwell
+package applied
 
 import cats.data.ValidatedNel
 import cats.effect.IO

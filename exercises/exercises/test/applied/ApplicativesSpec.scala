@@ -1,4 +1,4 @@
-package maxwell
+package applied
 
 import cats.instances.OptionInstances
 import org.scalatest._
@@ -7,7 +7,7 @@ import cats.syntax.functor._
 import cats.laws.discipline.ApplicativeTests
 
 import org.scalacheck.{Arbitrary, Gen}
-import maxwell.applicative._
+import applied.applicative._
 
 class ApplicativesSpec extends CatsSuite {
 

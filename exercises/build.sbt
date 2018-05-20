@@ -6,20 +6,20 @@ val catsEffectVersion = "0.10.1"
 val circeVersion = "0.9.0"
 val disciplineVersion = "0.8"
 
-lazy val `maxwell-fp` =
+lazy val `applied-fp` =
   project
     .in(file("."))
     .aggregate(
-      `maxwell-fp-exercises`,
-      `maxwell-fp-solutions`,
+      `applied-fp-exercises`,
+      `applied-fp-solutions`,
     )
 
-lazy val `maxwell-fp-exercises` =
+lazy val `applied-fp-exercises` =
   project
     .in(file("exercises"))
     .settings(commonSettings)
 
-lazy val `maxwell-fp-solutions` =
+lazy val `applied-fp-solutions` =
   project
     .in(file("solutions"))
     .settings(commonSettings)

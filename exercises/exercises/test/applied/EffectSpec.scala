@@ -1,4 +1,4 @@
-package maxwell
+package applied
 
 import scala.concurrent.duration.DurationInt
 import org.scalatest._

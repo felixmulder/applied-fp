@@ -1,4 +1,4 @@
-package maxwell
+package applied
 
 //import cats.syntax.apply._
 //import cats.syntax.applicative._
