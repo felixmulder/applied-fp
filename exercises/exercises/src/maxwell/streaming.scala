@@ -42,7 +42,7 @@ object streaming {
   // methods on the `Stream` type
 
   /** Creates a stream which repeats the element `a` */
-  def repeated[A](a: A): Stream[Pure, A] =
+  def repeated[A](a: => A): Stream[Pure, A] =
     ???
 
   /** Returns a list with only even elements */
@@ -94,7 +94,7 @@ object streaming {
   ): Stream[IO, Unit] =
     ???
 
-  /** Retry an `op` for a maximum of `retries`, backing off `backOff` between
+  /** Try an `op` for a maximum of `tries`, backing off `backOff` between
    *  each retry
    *
    *  Meaning with: `retryOp(io, 5, 2.seconds)`, there would be an attempt at:
@@ -103,21 +103,21 @@ object streaming {
    *
    *  If a valid return value hasn't been produced - the stream will fail
    */
-  def retryOp[A](op: IO[A], retries: Int, backOff: FiniteDuration)(
+  def retryOp[A](op: IO[A], tries: Int, backOff: FiniteDuration)(
     implicit
     S: Scheduler,
     EC: ExecutionContext
   ): Stream[IO, A] =
     ???
 
-  /** Tries to evaluate `op` every `period` with `retries` amount of retries
+  /** Tries to evaluate `op` every `period` with trying `tries` times
    *
    *  If the evaluation fails more than `retries` - the stream should log the
    *  failure and then continue evaluation as if nothing happened.
    */
   def periodicallyRetry[A](
     op: IO[A],
-    retries: Int,
+    tries: Int,
     backOff: FiniteDuration,
     period: FiniteDuration
   )(implicit S: Scheduler, EC: ExecutionContext): Stream[IO, A] =

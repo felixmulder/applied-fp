@@ -6,7 +6,8 @@ import scala.concurrent.duration.DurationInt
 import cats.effect.{IO, Timer}
 import cats.implicits._
 
-import fs2.async.{signalOf, refOf}
+import fs2.async.{signalOf, refOf, Ref}
+import fs2.async.Ref.Change
 import fs2.{Scheduler, Stream}
 
 class StreamingSpec extends FlatSpec with Matchers {
@@ -122,5 +123,87 @@ class StreamingSpec extends FlatSpec with Matchers {
       count > 50 && count < 150,
       s"expected counter to be 50-150, but was: $counter"
     )
+  }
+
+  // Fails `n - 1` times and then succeeds
+  def succeedAt(p: Int => Boolean, ref: Ref[IO, Int]): IO[Int] =
+    ref.modify(_ + 1).flatMap { c =>
+      if (p(c.now)) IO.pure(c.now)
+      else IO.raiseError(new Exception("not yet ready"))
+    }
+
+  "`retryOp`" should "be able to fail 4 times and then succeed" in {
+    val timeLimit: IO[Unit] =
+      Timer[IO].sleep(57.millis) >>
+      IO.raiseError(new Exception("took too long to complete"))
+
+    val retry = for {
+      r    <- Stream.eval(refOf[IO, Int](0))
+           // fail 4 times, then succeed
+      task =  succeedAt(_ >= 5, r)
+      s    <- Scheduler[IO](1)
+           // retry 6 times with 10 millis between each retry
+      c    <- retryOp(task, tries = 6, backOff = 10.millis)(s, global)
+    } yield {
+      // the fifth time, the op should succeed, and the counter should thus be 5:
+      assert(c == 5, s"- the amount of times failed before succeeding was not correct")
+    }
+
+    IO.race(timeLimit, retry.compile.drain).unsafeRunSync()
+  }
+
+  it should "return the latest error when not succeeding at all" in {
+    val timeLimit: IO[Unit] =
+      Timer[IO].sleep(57.millis) >>
+      IO.raiseError(new Exception("took too long to complete"))
+
+    val retry = for {
+      r    <- Stream.eval(refOf[IO, Int](0))
+           // succeed at first try after retries should have stopped
+      task =  succeedAt(_ >= 7, r)
+      s    <- Scheduler[IO](1)
+      res  <- retryOp(task, tries = 6, backOff = 10.millis)(s, global).attempt
+    } yield assert(res.isLeft)
+
+    IO.race(timeLimit, retry.compile.drain).unsafeRunSync()
+  }
+
+  "`periodicallyRetry`" should "evaluate the task twice within the period" in {
+    val timeLimit: IO[Unit] =
+      Timer[IO].sleep(257.millis) >>
+      IO.raiseError(new Exception("took too long to complete"))
+
+    val periodicRetry: Stream[IO, Int] = for {
+      r    <- Stream.eval(refOf[IO, Int](0))
+      task =  succeedAt(n => n == 5 || n == 10, r)
+      s    <- Scheduler[IO](1)
+      res  <- periodicallyRetry(task, tries = 6, backOff = 10.millis, period = 100.millis)(s, global)
+    } yield res
+
+    val testPeriodicRetry =
+      periodicRetry.take(2).compile.toList.map { xs =>
+        assert(xs == List(5, 10))
+      }
+
+
+    IO.race(timeLimit, testPeriodicRetry).unsafeRunSync()
+  }
+
+  it should "interrupt the second period if it takes too long" in {
+    val sig = signalOf[IO, Boolean](false).unsafeRunSync()
+    val shutterDowner: Stream[IO, Unit] =
+      Stream.eval(Timer[IO].sleep(250.millis) >> sig.set(true))
+
+    val periodicRetry: Stream[IO, Either[Throwable, Int]] = (for {
+      r    <- Stream.eval(refOf[IO, Int](0))
+      task =  succeedAt(n => n == 1, r)
+      s    <- Scheduler[IO](1)
+      res  <- periodicallyRetry(task, tries = 3, backOff = 50.millis, period = 100.millis)(s, global)
+    } yield res).attempt.interruptWhen(sig)
+
+    periodicRetry.concurrently(shutterDowner).compile.toList.map { xs =>
+      assert(xs == List(Right(1)))
+    }
+    .unsafeRunSync()
   }
 }
